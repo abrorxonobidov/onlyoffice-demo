@@ -14,5 +14,7 @@ class Document extends Model
     'code',
     'path',
     'ext',
+    'created_at',
+    'updated_at'
   ];
 }

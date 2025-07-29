@@ -51,7 +51,7 @@ class DocumentController extends Controller
     $documentConfig = [
       'document' => [
         'fileType' => $doc->ext,
-        'key' => $doc->id . '-' . $doc->updated_at,
+        'key' => $doc->id . '-' . md5($doc->updated_at),
         'title' => $doc->name,
         'url' => route('document-get', $doc->id),
       ],
