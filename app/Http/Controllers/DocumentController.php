@@ -177,4 +177,14 @@ class DocumentController extends Controller
     $doc->delete();
     return redirect()->to('document-index');
   }
+
+  public function view($id)
+  {
+    $doc = Document::query()->findOrFail($id);
+    return view('document.view', [
+      'doc' => $doc
+    ]);
+  }
+
+
 }

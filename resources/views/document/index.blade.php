@@ -75,6 +75,15 @@
               >
                 <i class="icon-base ti tabler-pencil"></i>
               </a>
+              <a href="{{route('document-view', ['id' => $document->id])}}"
+                 class="btn text-white btn-primary rounded-pill btn-icon"
+                 data-bs-toggle="tooltip"
+                 data-bs-placement="top"
+                 data-bs-original-title="View"
+                 data-bs-custom-class="tooltip-primary"
+              >
+                <i class="icon-base ti tabler-eye"></i>
+              </a>
               <form action="{{route('document-delete')}}" method="POST" class="d-inline">
                 @csrf
                 <input type="text" class="d-none" name="document_id" value="{{$document->id}}" />

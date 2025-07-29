@@ -25,5 +25,6 @@ Route::get('/auth/register-basic', [RegisterBasic::class, 'index'])->name('auth-
 Route::get('/document/index', [DocumentController::class, 'index'])->name('document-index');
 Route::post('/upload', [DocumentController::class, 'upload'])->name('document-upload');
 Route::get('/edit/{id}', [DocumentController::class, 'edit'])->name('document-edit');
+Route::get('/view/{id}', [DocumentController::class, 'view'])->name('document-view');
 Route::get('/get/{id}', [DocumentController::class, 'get'])->name('document-get');
 Route::post('/delete', [DocumentController::class, 'delete'])->name('document-delete');
