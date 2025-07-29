@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Document;
+use Exception;
 use Firebase\JWT\JWT;
 use Firebase\JWT\Key;
 use Illuminate\Http\Request;
@@ -35,7 +36,7 @@ class DocumentController extends Controller
     $documentConfig = [
       'document' => [
         'fileType' => $doc->ext,
-        'key' => $doc->id . '-' . rand(15, 1000),
+        'key' => $doc->id . '-' . $doc->updated_at,
         'title' => $doc->name,
         'url' => route('document-get', $doc->id),
       ],
@@ -48,10 +49,10 @@ class DocumentController extends Controller
           'id' => 55,
           'name' => 'Obidov A.A.',
         ],
-        "customization" => [
-          "forcesave" => false,
+        'customization' => [
+          'forcesave' => true,
           'compactHeader' => true,
-          "help" => false,
+          'help' => false,
           'macros' => false,
           'macrosMode' => "disabled",
           'plugins' => false,
@@ -64,7 +65,7 @@ class DocumentController extends Controller
             'url' => route('document-index'),
           ],
           'uiTheme' => 'theme-light'
-        ],
+        ]
       ]
     ];
 
@@ -82,19 +83,12 @@ class DocumentController extends Controller
   public function get($id)
   {
     $doc = Document::query()->findOrFail($id);
-    //echo $doc->path;
-
     $path = Storage::path($doc->path);
-    Log::info($path);
     return response()->file($path);
   }
 
   public function callback(Request $request, $id)
   {
-
-    Log::info("id=$id");
-    Log::info(json_encode($request->all()));
-
     $secret = config('onlyoffice.secret');
 
     $payload = $request->get('token');
@@ -103,29 +97,59 @@ class DocumentController extends Controller
       return response()->json(['error' => 1, 'message' => 'Missing token'], 400);
     }
 
+    $document = Document::query()->find($id);
+
+    if (empty($document)) {
+      return response()->json(['error' => 1, 'message' => 'Document not found'], 400);
+    }
+
+
     try {
       $decoded = JWT::decode($payload, new Key($secret, 'HS256'));
       $data = (array)$decoded;
-
-      // ✅ Optional: handle different statuses
-      if (isset($data['status'])) {
-        switch ($data['status']) {
-          case 2:
-            Log::info("Document is ready for saving");
-            // You can save the file here if you handle saving manually
-            break;
-          case 6:
-            Log::info("Document must be force saved");
-            break;
-          default:
-            Log::info("Callback status: " . $data['status']);
-            break;
-        }
+      $error = 1;
+      switch ($data['status']) {
+        case 1:
+          Log::info("Document is opened");
+          $error = 0;
+          break;
+        case 2:
+          Log::info("Document is ready for saving");
+          $error = 0;
+          break;
+        case 4:
+          Log::info("Document is closed");
+          $error = 0;
+          break;
+        case 6:
+          Log::info("Force save");
+          $downloadUri = $data["url"];
+          if (($new_data = file_get_contents($downloadUri)) === false) {
+            Log::error('Failed to download document');
+          } else {
+            try {
+              $save_res = Storage::put($document->path, $new_data);
+            } catch (Exception $exception) {
+              $save_res = false;
+              Log::error($exception->getMessage());
+            }
+            if ($save_res) {
+              $document->update([
+                'updated_at' => date('Y-m-d H:i:s')
+              ]);
+              $error = 0;
+            }
+          }
+          Log::info("Document must be force saved");
+          break;
+        default:
+          Log::info("Callback status: " . $data['status']);
+          break;
       }
 
-      return response()->json(['error' => 0]);
+      return response()->json(['error' => $error]);
 
-    } catch (\Exception $e) {
+    } catch (Exception $e) {
       Log::error('OnlyOffice JWT verification failed: ' . $e->getMessage());
       return response()->json(['error' => 1, 'message' => 'Invalid token'], 403);
     }
@@ -137,6 +161,5 @@ class DocumentController extends Controller
     $doc = Document::query()->findOrFail($id);
     $doc->delete();
     return redirect()->to('document-index');
-
   }
 }
