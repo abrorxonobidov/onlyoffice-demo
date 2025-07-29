@@ -7,8 +7,10 @@ use Exception;
 use Firebase\JWT\JWT;
 use Firebase\JWT\Key;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 class DocumentController extends Controller
 {
@@ -20,13 +22,26 @@ class DocumentController extends Controller
 
   public function upload(Request $request)
   {
+    $request->validate([
+      'file' => 'required|file|extensions:docx,xlsx|max:2048'
+    ]);
+
     $file = $request->file('file');
-    $path = $file->store('documents');
+    $date = date('Y-m-d H:i:s');
+    $folder = date('Y/m/d', strtotime($date));
+    $code = md5(Str::random(32) . time());
+    $ext = $file->getClientOriginalExtension();
+    $path = $file->storeAs($folder, "$code.$ext");
     $doc = Document::query()->create([
       'name' => $file->getClientOriginalName(),
       'path' => $path,
+      'code' => $code,
+      'ext' => $ext,
+      'created_at' => $date,
     ]);
-    return back();
+    return redirect()->route('document-edit', [
+      'id' => $doc->id
+    ]);
   }
 
   public function edit($id)
@@ -46,7 +61,7 @@ class DocumentController extends Controller
         'lang' => 'en',
         'callbackUrl' => route('document-callback', ['id' => $doc->id]),
         'user' => [
-          'id' => 55,
+          'id' => Auth::id(),
           'name' => 'Obidov A.A.',
         ],
         'customization' => [

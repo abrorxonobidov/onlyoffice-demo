@@ -39,7 +39,7 @@
       <form method="POST" action="{{ route('document-upload') }}" enctype="multipart/form-data">
         @csrf
         <div class="input-group">
-          <input type="file" class="form-control" id="file-upload-input">
+          <input type="file" name="file" class="form-control" id="file-upload-input">
           <button class="btn btn-outline-primary waves-effect" type="submit" id="file-upload-input">
             Save
           </button>
