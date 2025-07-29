@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Helpers\Helpers;
 use Illuminate\Database\Eloquent\Model;
 
 class Document extends Model
@@ -17,4 +18,9 @@ class Document extends Model
     'created_at',
     'updated_at'
   ];
+
+  public function documentType(): string
+  {
+    return Helpers::documentTypeList()[$this->ext];
+  }
 }

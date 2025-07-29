@@ -308,4 +308,14 @@ class Helpers
 }
 CSS;
   }
+
+  public static function documentTypeList(): array
+  {
+    return [
+      'docx' => 'word',
+      'xlsx' => 'cell',
+      'pptx' => 'slide',
+      'pdf' => 'pdf',
+    ];
+  }
 }

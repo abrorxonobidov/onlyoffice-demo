@@ -22,29 +22,64 @@
 @section('vendor-script')
   @vite([
     'resources/assets/vendor/libs/datatables-bs5/datatables-bootstrap5.js',
-    'resources/assets/vendor/libs/moment/moment.js',
-    'resources/assets/vendor/libs/flatpickr/flatpickr.js',
     'resources/assets/vendor/libs/@form-validation/popular.js',
     'resources/assets/vendor/libs/@form-validation/bootstrap5.js',
     'resources/assets/vendor/libs/@form-validation/auto-focus.js',
   ])
 @endsection
 
-@section('content')
+<!-- Page Scripts -->
+@section('page-script')
+  @vite(['resources/assets/js/document-index.js'])
+@endsection
 
+
+@section('content')
 
   <div class="card">
     <h5 class="card-header">File upload</h5>
     <div class="card-body demo-vertical-spacing demo-only-element">
-      <form method="POST" action="{{ route('document-upload') }}" enctype="multipart/form-data">
-        @csrf
-        <div class="input-group">
-          <input type="file" name="file" class="form-control" id="file-upload-input">
-          <button class="btn btn-outline-primary waves-effect" type="submit" id="file-upload-input">
-            Save
-          </button>
+      <div class="row">
+        <div class="col-6">
+          <form method="POST" id="file-upload-form" onsubmit="return false" action="{{ route('document-upload') }}"
+                enctype="multipart/form-data">
+            @csrf
+            <div class="input-group">
+              <input type="file" name="file" class="form-control" id="file-upload-input">
+              <button class="btn btn-primary waves-effect" type="submit" id="file-upload-input">
+                <i class="icon-base ti tabler-upload"></i> &nbsp;
+                Upload
+              </button>
+            </div>
+          </form>
         </div>
-      </form>
+        <div class="col-6">
+          <form method="POST" id="form-add-new-file" onsubmit="return false" action="{{ route('document-create') }}">
+            @csrf
+            <div class="input-group input-group-validator">
+              <input type="text" name="name" class="form-control" id="name-input" value="New File">
+              <select name="ext" class="form-control select2">
+                <option value="docx">
+                  Document (.docx)
+                </option>
+                <option value="xlsx">
+                  Spreadsheet (.xlsx)
+                </option>
+                <option value="pptx">
+                  Presentation (.pptx)
+                </option>
+                <option value="pdf">
+                  PDF (.pdf)
+                </option>
+              </select>
+              <button class="btn btn-primary waves-effect" type="submit" id="name-input">
+                <i class="icon-base ti tabler-plus"></i> &nbsp;
+                Create
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
     </div>
 
     <div class="card-datatable table-responsive">
@@ -54,6 +89,7 @@
           <th>#</th>
           <th>ID</th>
           <th>Name</th>
+          <th>File Type</th>
           <th>Created at</th>
           <th>Action</th>
         </tr>
@@ -64,6 +100,7 @@
             <td>{{$documentPagination->perPage() * ($documentPagination->currentPage()-1) + $key+1 }}</td>
             <td>{{$document->id}}</td>
             <td>{{$document->name}}</td>
+            <td>{{$document->documentType()}}</td>
             <td>{{$document->created_at}}</td>
             <td>
               <a href="{{route('document-edit', ['id' => $document->id])}}"
@@ -102,8 +139,8 @@
         </tbody>
       </table>
     </div>
-    <div class="card-body">
-      <div class="col-12">
+    <div class="card-footer">
+      <div class="col-12 dt-container dt-bootstrap5">
         {{$documentPagination->appends(request()->query())->links()}}
       </div>
     </div>

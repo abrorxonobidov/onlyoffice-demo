@@ -2,11 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\Helpers;
 use App\Models\Document;
 use Exception;
 use Firebase\JWT\JWT;
 use Firebase\JWT\Key;
 use Illuminate\Http\Request;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
@@ -16,8 +18,33 @@ class DocumentController extends Controller
 {
   public function index()
   {
-    $documentPagination = Document::query()->paginate(20);
+    $documentPagination = Document::query()->paginate(10);
     return view('document.index', compact('documentPagination'));
+  }
+
+  public function create(Request $request)
+  {
+    $request->validate([
+      'name' => 'required|string|max:255',
+      'ext' => 'required|string|in:xlsx,docx,pptx,pdf',
+    ]);
+
+    $file = new UploadedFile(Storage::disk('sample')->path("template." . $request->input('ext')), $request->input('name'));
+    $date = date('Y-m-d H:i:s');
+    $folder = date('Y/m/d', strtotime($date));
+    $code = md5(Str::random(32) . time());
+    $ext = $file->getExtension();
+    $path = $file->storeAs($folder, "$code.$ext");
+    $doc = Document::query()->create([
+      'name' => $file->getClientOriginalName() . '.' . $ext,
+      'path' => $path,
+      'code' => $code,
+      'ext' => $ext,
+      'created_at' => $date,
+    ]);
+    return redirect()->route('document-edit', [
+      'id' => $doc->id
+    ]);
   }
 
   public function upload(Request $request)
@@ -51,11 +78,11 @@ class DocumentController extends Controller
     $documentConfig = [
       'document' => [
         'fileType' => $doc->ext,
-        'key' => $doc->id . '-' . md5($doc->updated_at),
+        'key' => $doc->id . '-' . md5($doc->updated_at) . time(),
         'title' => $doc->name,
         'url' => route('document-get', $doc->id),
       ],
-      'documentType' => 'word',
+      'documentType' => Helpers::documentTypeList()[$doc->ext],
       'editorConfig' => [
         'mode' => 'edit',
         'lang' => 'en',
@@ -97,6 +124,7 @@ class DocumentController extends Controller
 
   public function get($id)
   {
+    Log::info("Get $id");
     $doc = Document::query()->findOrFail($id);
     $path = Storage::path($doc->path);
     return response()->file($path);

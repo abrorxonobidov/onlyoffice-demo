@@ -37,6 +37,13 @@ return [
             'throw' => false,
             'report' => false,
         ],
+      'sample' => [
+        'driver' => 'local',
+        'root' => storage_path('do_not_delete'),
+        'serve' => true,
+        'throw' => false,
+        'report' => false,
+      ],
 
         'public' => [
             'driver' => 'local',
