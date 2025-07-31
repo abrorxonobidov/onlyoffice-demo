@@ -1,7 +1,2 @@
-import { PDFWorker } from 'pdfjs-dist/build/pdf.mjs';
-
-try {
-  window.PDFWorker = PDFWorker;
-} catch (e) {}
-
-export { PDFWorker };
+import 'pdfjs-dist/build/pdf.min.mjs';
+import 'pdfjs-dist/build/pdf.worker.min.mjs';

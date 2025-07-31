@@ -12,3 +12,4 @@ use App\Http\Controllers\DocumentController;
 
 Route::post('/callback/{id}', [DocumentController::class, 'callback'])->name('document-callback');
 Route::get('/get/{id}', [DocumentController::class, 'get'])->name('document-get');
+Route::get('/get-pdf/{code}', [DocumentController::class, 'getPdf'])->name('get-pdf');

@@ -130,6 +130,14 @@ class DocumentController extends Controller
     return response()->file($path);
   }
 
+
+  public function getPdf($code)
+  {
+    $doc = Document::query()->where('code', $code)->firstOrFail();
+    $pdfPath = Storage::path($doc->pdfPath());
+    return response()->file($pdfPath);
+  }
+
   public function callback(Request $request, $id)
   {
     $secret = config('onlyoffice.secret');

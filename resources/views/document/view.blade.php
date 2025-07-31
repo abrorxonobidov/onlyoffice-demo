@@ -16,6 +16,11 @@
   ])
 @endsection
 
+<!-- Vendor Style -->
+@section('vendor-style')
+  @vite(['resources/assets/vendor/libs/pdfjs/pdf.scss'])
+@endsection
+
 <!-- Page Scripts -->
 @section('page-script')
   @vite(['resources/assets/js/pdf-view.js'])
@@ -23,6 +28,6 @@
 
 
 @section('content')
-  {{json_encode($doc->attributesToArray())}}
+  <div class="pdf-viewer" data-url="{{route('get-pdf', ['code' => $doc->code])}}"></div>
 @endsection
 

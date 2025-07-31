@@ -23,4 +23,9 @@ class Document extends Model
   {
     return Helpers::documentTypeList()[$this->ext];
   }
+
+  public function pdfPath(): string
+  {
+    return str_replace(".$this->ext", '.pdf', $this->path);
+  }
 }
