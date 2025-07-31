@@ -5,8 +5,21 @@ namespace App\Models;
 use App\Helpers\Helpers;
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * @property string $name
+ * @property string $code
+ * @property string $path
+ * @property string $ext
+ * @property string $created_at
+ * @property string $updated_at
+ * @property int $pdf_status
+ * @property string $pdf_updated_at
+ */
 class Document extends Model
 {
+
+  const PDF_STATUS_EDITED = 1;
+  const PDF_STATUS_READY = 3;
 
   protected $table = 'document';
 
@@ -16,7 +29,9 @@ class Document extends Model
     'path',
     'ext',
     'created_at',
-    'updated_at'
+    'updated_at',
+    'pdf_status',
+    'pdf_updated_at',
   ];
 
   public function documentType(): string
@@ -28,4 +43,11 @@ class Document extends Model
   {
     return str_replace(".$this->ext", '.pdf', $this->path);
   }
+
+
+  public function isPdfReady(): bool
+  {
+    return $this->pdf_status == self::PDF_STATUS_READY;
+  }
+
 }

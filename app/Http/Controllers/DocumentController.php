@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Helpers\Helpers;
 use App\Models\Document;
+use App\Services\PdfService;
 use Exception;
 use Firebase\JWT\JWT;
 use Firebase\JWT\Key;
@@ -131,10 +132,27 @@ class DocumentController extends Controller
   }
 
 
+  /**
+   * @throws Exception
+   */
   public function getPdf($code)
   {
     $doc = Document::query()->where('code', $code)->firstOrFail();
+
     $pdfPath = Storage::path($doc->pdfPath());
+
+    if (!$doc->isPdfReady())
+      if (PdfService::convertDocumentToPdf($doc)) {
+        $doc->update([
+          'pdf_status' => Document::PDF_STATUS_READY,
+          'pdf_updated_at' => date('Y-m-d H:i:s'),
+        ]);
+      } else
+        throw new Exception("Error on converting file", 500);
+
+    if (!file_exists($pdfPath))
+      $pdfPath = Storage::disk('sample')->path('not_found.pdf');
+
     return response()->file($pdfPath);
   }
 
@@ -220,6 +238,21 @@ class DocumentController extends Controller
     return view('document.view', [
       'doc' => $doc
     ]);
+  }
+
+  /**
+   * @throws Exception
+   */
+  public function getFile($code)
+  {
+    $doc = Document::query()->where('code', $code)->firstOrFail();
+
+    $filePath = Storage::path($doc->path);
+
+    if (!file_exists($filePath))
+      throw new Exception("File not found", 404);
+
+    return response()->file($filePath);
   }
 
 
