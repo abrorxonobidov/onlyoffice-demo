@@ -1,7 +1,15 @@
 .pdf-viewer {
   text-align: center;
+  position: relative;
   canvas {
     box-shadow: 0 0 7px 0 #000000;
     margin-bottom: 5px;
+    max-width: 30cm;
+  }
+  .pdf-download {
+    position: absolute;
+    z-index: 2;
+    right: 20px;
+    box-shadow: 0 0 7px 0 #000000;
   }
 }

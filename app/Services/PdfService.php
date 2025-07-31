@@ -27,9 +27,9 @@ class PdfService
   {
 
     return self::convert([
-      'async' => false,
+      'async' => true,
       'filetype' => $doc->ext,
-      'key' => md5($doc->code . $doc->pdf_status . $doc->updated_at),
+      'key' => md5($doc->code . $doc->updated_at),
       'outputtype' => 'pdf',
       'title' => $title ?? 'PDF document',
       'url' => route('get-file', ['code' => $doc->code])
@@ -71,7 +71,7 @@ class PdfService
     if (Storage::put($result_path, $fileContent) === false)
       throw new Exception('Error on saving converted file. file_put_contents error', 500);
 
-    return true;
+    return $data['endConvert'];
   }
 
 }

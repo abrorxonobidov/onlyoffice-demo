@@ -2,7 +2,7 @@
 
 document.addEventListener('DOMContentLoaded', function () {
   (() => {
-    const renderPage = (pageNumber, canvas, pdf) =>
+    const renderPage = (pageNumber, canvas, pdf) => {
       pdf.getPage(pageNumber).then(page => {
         let viewport = page.getViewport({ scale: 1.5 });
         canvas.height = viewport.height;
@@ -12,9 +12,10 @@ document.addEventListener('DOMContentLoaded', function () {
           viewport: viewport
         });
       });
+    };
 
-    const showPdf = viewer =>
-      pdfjsLib.getDocument(viewer.getAttribute('data-url')).promise.then(pdf => {
+    const showPdf = viewer => {
+      pdfjsLib.getDocument(viewer.getAttribute('data-get-url')).promise.then(pdf => {
         viewer.innerHTML = '';
         for (let page = 1; page <= pdf.numPages; page++) {
           let canvas = document.createElement('canvas');
@@ -26,17 +27,37 @@ document.addEventListener('DOMContentLoaded', function () {
           let blob = new Blob([pdfData], { type: 'application/pdf' });
           let downloadBtn = document.createElement('a');
           downloadBtn.setAttribute('id', `download-virtual-${viewer.getAttribute('id')}`);
-          downloadBtn.setAttribute('class', 'hidden');
+          downloadBtn.setAttribute('class', 'pdf-download btn btn-success');
+          downloadBtn.innerText = 'Download';
           downloadBtn.setAttribute('href', URL.createObjectURL(blob));
-          downloadBtn.setAttribute('download', viewer.getAttribute('name'));
-          viewer.appendChild(downloadBtn);
+          downloadBtn.setAttribute('download', viewer.getAttribute('data-name'));
+          viewer.prepend(downloadBtn);
         });
       });
+    };
+
+    const checkPdf = async viewer => {
+      const res = await fetch(viewer.getAttribute('data-check-url'), {
+        method: 'GET',
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json'
+        }
+      }).then(res => {
+        return res.json();
+      });
+
+      if (res.error) viewer.innerHTML = 'Xatolik yuz berdi. Iltimos, sahifani yangilang';
+
+      if (res) showPdf(viewer);
+    };
 
     const pdfViewers = document.querySelectorAll('.pdf-viewer');
 
-    if (pdfViewers && typeof pdfViewers !== 'undefined')
-      pdfViewers.forEach(pdfViewer => showPdf(pdfViewer));
-
+    if (pdfViewers && typeof pdfViewers !== 'undefined') {
+      pdfViewers.forEach(pdfViewer => {
+        setTimeout(() => checkPdf(pdfViewer), 2000);
+      });
+    }
   })();
 });

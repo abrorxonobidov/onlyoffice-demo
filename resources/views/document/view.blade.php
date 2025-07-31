@@ -28,6 +28,16 @@
 
 
 @section('content')
-  <div class="pdf-viewer" data-url="{{route('get-pdf', ['code' => $doc->code])}}"></div>
+  <div
+    id="{{$doc->code}}"
+    class="pdf-viewer"
+    data-name="{{$doc->name}}"
+    data-check-url="{{route('check-pdf', ['code' => $doc->code])}}"
+    data-get-url="{{route('get-pdf', ['code' => $doc->code])}}"
+  >
+    <div class="spinner-border text-primary" role="status">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+  </div>
 @endsection
 

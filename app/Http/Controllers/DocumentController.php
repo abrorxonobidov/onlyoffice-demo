@@ -148,12 +148,40 @@ class DocumentController extends Controller
           'pdf_updated_at' => date('Y-m-d H:i:s'),
         ]);
       } else
-        throw new Exception("Error on converting file", 500);
+        $pdfPath = Storage::disk('sample')->path('converting.pdf');
 
     if (!file_exists($pdfPath))
       $pdfPath = Storage::disk('sample')->path('not_found.pdf');
 
     return response()->file($pdfPath);
+  }
+
+  /**
+   * @throws Exception
+   */
+  public function checkPdf($code)
+  {
+    $doc = Document::query()->where('code', $code)->firstOrFail();
+
+    if ($doc->isPdfReady())
+      return true;
+
+    if ($doc->isPdfConverting())
+      return false;
+
+    if (PdfService::convertDocumentToPdf($doc)) {
+      $doc->update([
+        'pdf_status' => Document::PDF_STATUS_READY,
+        'pdf_updated_at' => date('Y-m-d H:i:s'),
+      ]);
+      return true;
+    } else {
+      $doc->update([
+        'pdf_status' => Document::PDF_STATUS_CONVERTING,
+      ]);
+      return false;
+    }
+
   }
 
   public function callback(Request $request, $id)

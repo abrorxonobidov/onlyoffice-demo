@@ -19,6 +19,7 @@ class Document extends Model
 {
 
   const PDF_STATUS_EDITED = 1;
+  const PDF_STATUS_CONVERTING = 2;
   const PDF_STATUS_READY = 3;
 
   protected $table = 'document';
@@ -48,6 +49,11 @@ class Document extends Model
   public function isPdfReady(): bool
   {
     return $this->pdf_status == self::PDF_STATUS_READY;
+  }
+
+  public function isPdfConverting(): bool
+  {
+    return $this->pdf_status == self::PDF_STATUS_CONVERTING;
   }
 
 }
