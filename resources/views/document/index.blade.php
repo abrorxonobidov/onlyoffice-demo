@@ -95,11 +95,11 @@
         </tr>
         </thead>
         <tbody>
-        @foreach($documentPagination as $key => $document)
+        @foreach($documentPagination->getCollection() as $key => $document)
           <tr class="odd">
             <td>{{$documentPagination->perPage() * ($documentPagination->currentPage()-1) + $key+1 }}</td>
             <td>{{$document->name}}</td>
-            <td>{{$document->documentType()}}</td>
+            <td><i class="icon-base ti tabler-file-type-{{$document->documentTypeIcon()}}"></i></td>
             <td>{{$document->pdfStatusLabel()}}</td>
             <td>{{$document->created_at}}</td>
             <td>

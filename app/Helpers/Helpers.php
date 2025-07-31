@@ -318,4 +318,17 @@ CSS;
       'pdf' => 'pdf',
     ];
   }
+
+  public static function documentTypeIconList(): array
+  {
+    return [
+      'doc' => 'doc',
+      'docx' => 'docx',
+      'xls' => 'xls',
+      'xlsx' => 'xls',
+      'ppt' => 'ppt',
+      'pptx' => 'ppt',
+      'pdf' => 'pdf',
+    ];
+  }
 }
