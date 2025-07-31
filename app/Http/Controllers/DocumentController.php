@@ -248,7 +248,7 @@ class DocumentController extends Controller
             if ($save_res) {
               $document->update([
                 'updated_at' => date('Y-m-d H:i:s'),
-                'pdf_status' => Document::PDF_STATUS_EDITED,
+                'pdf_status' => $document->ext != 'pdf' ? Document::PDF_STATUS_EDITED : Document::PDF_STATUS_READY,
               ]);
               $error = 0;
             }
