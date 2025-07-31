@@ -141,14 +141,16 @@ class DocumentController extends Controller
 
     $pdfPath = Storage::path($doc->pdfPath());
 
-    if (!$doc->isPdfReady())
-      if (PdfService::convertDocumentToPdf($doc)) {
+    if (!$doc->isPdfReady()) {
+      $res = PdfService::convertDocumentToPdf($doc);
+      if ($res['endConvert']) {
         $doc->update([
           'pdf_status' => Document::PDF_STATUS_READY,
           'pdf_updated_at' => date('Y-m-d H:i:s'),
         ]);
       } else
         $pdfPath = Storage::disk('sample')->path('converting.pdf');
+    }
 
     if (!file_exists($pdfPath))
       $pdfPath = Storage::disk('sample')->path('not_found.pdf');
@@ -164,23 +166,26 @@ class DocumentController extends Controller
     $doc = Document::query()->where('code', $code)->firstOrFail();
 
     if ($doc->isPdfReady())
-      return true;
+      return [
+        'percent' => 100,
+        'endConvert' => true,
+        'error' => null
+      ];
 
-    if ($doc->isPdfConverting())
-      return false;
+    $res = PdfService::convertDocumentToPdf($doc);
 
-    if (PdfService::convertDocumentToPdf($doc)) {
+    if ($res['endConvert']) {
       $doc->update([
         'pdf_status' => Document::PDF_STATUS_READY,
         'pdf_updated_at' => date('Y-m-d H:i:s'),
       ]);
-      return true;
     } else {
       $doc->update([
         'pdf_status' => Document::PDF_STATUS_CONVERTING,
       ]);
-      return false;
     }
+
+    return $res;
 
   }
 

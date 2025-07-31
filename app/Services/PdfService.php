@@ -20,10 +20,10 @@ class PdfService
 
   /**
    * @param Document $doc
-   * @return bool
+   * @return array
    * @throws Exception
    */
-  public static function convertDocumentToPdf(Document $doc): bool
+  public static function convertDocumentToPdf(Document $doc): array
   {
 
     return self::convert([
@@ -39,7 +39,7 @@ class PdfService
   /**
    * @throws Exception
    */
-  private static function convert($payload, $result_path): bool
+  private static function convert($payload, $result_path): array
   {
     $jwt_token = Jwt::encode($payload, config('onlyoffice.secret'));
 
@@ -51,27 +51,37 @@ class PdfService
       ->withoutVerifying()
       ->post(config('onlyoffice.server_url') . '/ConvertService.ashx', $payload);
 
-    echo $jwt_token;
-
     if (!$response->successful())
       throw new Exception('Error on saving converted file. Unsuccessful', $response->status());
 
 
     $data = @$response->json();
+    $error = null;
+
+    if (!$data['endConvert'])
+      return [
+        'percent' => $data['percent'],
+        'endConvert' => $data['endConvert'],
+        'error' => $error,
+      ];
 
     if (empty($data))
-      throw new Exception('Error on saving converted file. Empty data', 404);
+      $error = 'Error on saving converted file. Empty data';
 
     if (empty(@$data['fileUrl']))
-      throw new Exception('Error on saving converted file. Empty fileUrl', 404);
+      $error = 'Error on saving converted file. Empty fileUrl';
 
     if (($fileContent = file_get_contents($data['fileUrl'])) === false)
-      throw new Exception('Error on saving converted file. file_get_contents error', 500);
+      $error = 'Error on saving converted file. file_get_contents error';
 
     if (Storage::put($result_path, $fileContent) === false)
-      throw new Exception('Error on saving converted file. file_put_contents error', 500);
+      $error = 'Error on saving converted file. file_put_contents error';
 
-    return $data['endConvert'];
+    return [
+      'percent' => $data['percent'],
+      'endConvert' => $data['endConvert'],
+      'error' => $error,
+    ];
   }
 
 }

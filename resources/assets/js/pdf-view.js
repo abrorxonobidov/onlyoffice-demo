@@ -47,17 +47,19 @@ document.addEventListener('DOMContentLoaded', function () {
         return res.json();
       });
 
-      if (res.error) viewer.innerHTML = 'Xatolik yuz berdi. Iltimos, sahifani yangilang';
+      if (res['error']) viewer.innerHTML = 'Xatolik yuz berdi. Iltimos, sahifani yangilang';
 
-      if (res) showPdf(viewer);
+      if (res['endConvert']) {
+        showPdf(viewer);
+      } else {
+        setTimeout(() => checkPdf(viewer), 2000);
+      }
     };
 
     const pdfViewers = document.querySelectorAll('.pdf-viewer');
 
     if (pdfViewers && typeof pdfViewers !== 'undefined') {
-      pdfViewers.forEach(pdfViewer => {
-        setTimeout(() => checkPdf(pdfViewer), 2000);
-      });
+      pdfViewers.forEach(pdfViewer => checkPdf(pdfViewer));
     }
   })();
 });
