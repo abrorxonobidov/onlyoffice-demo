@@ -12,7 +12,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property string $ext
  * @property string $created_at
  * @property string $updated_at
- * @property int $pdf_status
+ * @property int|null $pdf_status
  * @property string $pdf_updated_at
  */
 class Document extends Model
@@ -45,6 +45,15 @@ class Document extends Model
     return str_replace(".$this->ext", '.pdf', $this->path);
   }
 
+  public function pdfStatusLabel(): string
+  {
+    return match ($this->pdf_status) {
+      self::PDF_STATUS_EDITED => self::PDF_STATUS_EDITED,
+      self::PDF_STATUS_CONVERTING => self::PDF_STATUS_CONVERTING,
+      self::PDF_STATUS_READY => self::PDF_STATUS_READY,
+      null => '-',
+    };
+  }
 
   public function isPdfReady(): bool
   {

@@ -5,9 +5,7 @@
 
 @extends('layouts/layoutMaster')
 
-@section('title', $doc->name)
-
-
+@section('title', $document->name)
 
 <!-- Vendor Scripts -->
 @section('vendor-script')
@@ -29,15 +27,16 @@
 
 @section('content')
   <div
-    id="{{$doc->code}}"
+    id="{{$document->code}}"
     class="pdf-viewer"
-    data-name="{{$doc->name}}"
-    data-check-url="{{route('check-pdf', ['code' => $doc->code])}}"
-    data-get-url="{{route('get-pdf', ['code' => $doc->code])}}"
+    data-name="{{$document->name}}"
+    data-check-url="{{route('check-pdf', ['code' => $document->code])}}"
+    data-get-url="{{route('get-pdf', ['code' => $document->code])}}"
   >
     <div class="spinner-border text-primary" role="status">
       <span class="visually-hidden">Loading...</span>
     </div>
+    <p>Loading...</p>
   </div>
 @endsection
 

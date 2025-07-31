@@ -19,7 +19,17 @@ class DocumentController extends Controller
 {
   public function index()
   {
-    $documentPagination = Document::query()->paginate(10);
+    $documentPagination = Document::query()
+      ->select([
+        'id',
+        'code',
+        'name',
+        'ext',
+        'pdf_status',
+        'created_at'
+      ])
+      ->orderBy('id', 'desc')
+      ->paginate(10);
     return view('document.index', compact('documentPagination'));
   }
 
@@ -72,22 +82,22 @@ class DocumentController extends Controller
     ]);
   }
 
-  public function edit($id)
+  public function edit($code)
   {
-    $doc = Document::query()->findOrFail($id);
+    $doc = Document::query()->where('code', $code)->firstOrFail();
 
     $documentConfig = [
       'document' => [
         'fileType' => $doc->ext,
         'key' => $doc->id . '-' . md5($doc->updated_at) . time(),
         'title' => $doc->name,
-        'url' => route('document-get', $doc->id),
+        'url' => route('document-get', ['code' => $doc->code]),
       ],
       'documentType' => Helpers::documentTypeList()[$doc->ext],
       'editorConfig' => [
         'mode' => 'edit',
         'lang' => 'en',
-        'callbackUrl' => route('document-callback', ['id' => $doc->id]),
+        'callbackUrl' => route('document-callback', ['code' => $doc->code]),
         'user' => [
           'id' => Auth::id(),
           'name' => 'Obidov A.A.',
@@ -123,14 +133,12 @@ class DocumentController extends Controller
     ]);
   }
 
-  public function get($id)
+  public function get($code)
   {
-    Log::info("Get $id");
-    $doc = Document::query()->findOrFail($id);
+    $doc = Document::query()->where('code', $code)->firstOrFail();
     $path = Storage::path($doc->path);
     return response()->file($path);
   }
-
 
   /**
    * @throws Exception
@@ -161,7 +169,7 @@ class DocumentController extends Controller
   /**
    * @throws Exception
    */
-  public function checkPdf($code)
+  public function checkPdf($code, $i = 0)
   {
     $doc = Document::query()->where('code', $code)->firstOrFail();
 
@@ -185,11 +193,14 @@ class DocumentController extends Controller
       ]);
     }
 
+    if ($i > config('onlyoffice.pdf_check_limit'))
+      $res['error'] = 'An error occurred while generating PDF file, Please refresh the page and try again.';
+
     return $res;
 
   }
 
-  public function callback(Request $request, $id)
+  public function callback(Request $request, $code)
   {
     $secret = config('onlyoffice.secret');
 
@@ -199,7 +210,7 @@ class DocumentController extends Controller
       return response()->json(['error' => 1, 'message' => 'Missing token'], 400);
     }
 
-    $document = Document::query()->find($id);
+    $document = Document::query()->where('code', $code)->first();
 
     if (empty($document)) {
       return response()->json(['error' => 1, 'message' => 'Document not found'], 400);
@@ -224,7 +235,6 @@ class DocumentController extends Controller
           $error = 0;
           break;
         case 6:
-          Log::info("Force save");
           $downloadUri = $data["url"];
           if (($new_data = file_get_contents($downloadUri)) === false) {
             Log::error('Failed to download document');
@@ -237,12 +247,12 @@ class DocumentController extends Controller
             }
             if ($save_res) {
               $document->update([
-                'updated_at' => date('Y-m-d H:i:s')
+                'updated_at' => date('Y-m-d H:i:s'),
+                'pdf_status' => Document::PDF_STATUS_EDITED,
               ]);
               $error = 0;
             }
           }
-          Log::info("Document must be force saved");
           break;
         default:
           Log::info("Callback status: " . $data['status']);
@@ -258,18 +268,21 @@ class DocumentController extends Controller
 
   }
 
-  public function delete($id)
+  public function delete(Request $request)
   {
-    $doc = Document::query()->findOrFail($id);
-    $doc->delete();
+    $request->validate([
+      'code' => 'required',
+    ]);
+    $document = Document::query()->where('code', $request->code)->firstOrFail();
+    $document->delete();
     return redirect()->to('document-index');
   }
 
-  public function view($id)
+  public function view($code)
   {
-    $doc = Document::query()->findOrFail($id);
+    $document = Document::query()->where('code', $code)->first();
     return view('document.view', [
-      'doc' => $doc
+      'document' => $document
     ]);
   }
 

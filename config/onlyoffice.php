@@ -10,4 +10,5 @@ return [
   'server_url' => env('ONLYOFFICE_SERVER_URL', 'http://documentserver'),
   'secret' => env('ONLYOFFICE_JWT_SECRET'),
   'builder' => env('ONLYOFFICE_BUILDER_PATH'),
+  'pdf_check_limit' => env('ONLYOFFICE_PDF_CHECK_LIMIT', 10),
 ];

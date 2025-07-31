@@ -36,8 +36,8 @@ document.addEventListener('DOMContentLoaded', function () {
       });
     };
 
-    const checkPdf = async viewer => {
-      const res = await fetch(viewer.getAttribute('data-check-url'), {
+    const checkPdf = async (viewer, i = 1) => {
+      const res = await fetch(viewer.getAttribute('data-check-url') + '/' + i, {
         method: 'GET',
         headers: {
           Accept: 'application/json',
@@ -47,12 +47,15 @@ document.addEventListener('DOMContentLoaded', function () {
         return res.json();
       });
 
-      if (res['error']) viewer.innerHTML = 'Xatolik yuz berdi. Iltimos, sahifani yangilang';
+      if (res['error']) {
+        viewer.innerHTML = 'Xatolik yuz berdi. Iltimos, sahifani yangilang';
+        return;
+      }
 
       if (res['endConvert']) {
         showPdf(viewer);
       } else {
-        setTimeout(() => checkPdf(viewer), 2000);
+        setTimeout(() => checkPdf(viewer, ++i), 2000);
       }
     };
 

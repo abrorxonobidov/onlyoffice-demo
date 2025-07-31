@@ -7,7 +7,7 @@
 /storage/pail
 /vendor
 
-# .env
+.env
 .env.backup
 .env.production
 .phpactor.json
@@ -39,9 +39,6 @@ yarn-error.log
 # /public/assets/json/*
 # !/public/assets/json/search-vertical.json
 # !/public/assets/json/search-horizontal.json
-
-/resources/assets/vendor/fonts/flags/**
-/resources/assets/vendor/fonts/fontawesome/**
 
 # Except for 'template-customizer.js' inside 'resources/assets/vendor/js/'
 !/resources/assets/vendor/js/template-customizer.js

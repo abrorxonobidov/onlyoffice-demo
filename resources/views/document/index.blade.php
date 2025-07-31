@@ -87,9 +87,9 @@
         <thead>
         <tr>
           <th>#</th>
-          <th>ID</th>
           <th>Name</th>
           <th>File Type</th>
+          <th>Pdf</th>
           <th>Created at</th>
           <th>Action</th>
         </tr>
@@ -98,12 +98,12 @@
         @foreach($documentPagination as $key => $document)
           <tr class="odd">
             <td>{{$documentPagination->perPage() * ($documentPagination->currentPage()-1) + $key+1 }}</td>
-            <td>{{$document->id}}</td>
             <td>{{$document->name}}</td>
             <td>{{$document->documentType()}}</td>
+            <td>{{$document->pdfStatusLabel()}}</td>
             <td>{{$document->created_at}}</td>
             <td>
-              <a href="{{route('document-edit', ['id' => $document->id])}}"
+              <a href="{{route('document-edit', ['code' => $document->code])}}"
                  class="btn text-white btn-info rounded-pill btn-icon"
                  data-bs-toggle="tooltip"
                  data-bs-placement="top"
@@ -112,7 +112,7 @@
               >
                 <i class="icon-base ti tabler-pencil"></i>
               </a>
-              <a href="{{route('document-view', ['id' => $document->id])}}"
+              <a href="{{route('document-view', ['code' => $document->code])}}"
                  class="btn text-white btn-primary rounded-pill btn-icon"
                  data-bs-toggle="tooltip"
                  data-bs-placement="top"
@@ -123,7 +123,7 @@
               </a>
               <form action="{{route('document-delete')}}" method="POST" class="d-inline">
                 @csrf
-                <input type="text" class="d-none" name="document_id" value="{{$document->id}}" />
+                <input type="text" class="d-none" name="code" value="{{$document->code}}" />
                 <button type="submit" class="btn text-white btn-danger rounded-pill btn-icon waves-effect waves-light"
                         data-bs-toggle="tooltip"
                         data-bs-placement="top"
