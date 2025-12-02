@@ -91,7 +91,7 @@ class DocumentController extends Controller
         'fileType' => $doc->ext,
         'key' => $doc->code . '-' . md5($doc->updated_at) . time(),
         'title' => $doc->name,
-        'url' => route('document-get', ['code' => $doc->code]),
+        'url' => route('get-file', ['code' => $doc->code]),
       ],
       'documentType' => Helpers::documentTypeList()[$doc->ext],
       'editorConfig' => [
@@ -115,29 +115,20 @@ class DocumentController extends Controller
           'goback' => [
             'blank' => false,
             'text' => 'Exit',
-            'url' => route('document-index'),
+            'url' => route('document-view', ['code' => $doc->code]),
           ],
           'uiTheme' => 'theme-light'
         ]
       ]
     ];
 
-    $jwtSecret = config('onlyoffice.secret');
-    $token = JWT::encode($documentConfig, $jwtSecret, 'HS256');
-    $documentConfig['token'] = $token;
+    $documentConfig['token'] = JWT::encode($documentConfig, config('onlyoffice.secret'), 'HS256');
 
     return view('document.edit', [
       'doc' => $doc,
       'config' => json_encode($documentConfig),
       'serverUrl' => config('onlyoffice.server_url'), // change to your OnlyOffice server
     ]);
-  }
-
-  public function get($code)
-  {
-    $doc = Document::query()->where('code', $code)->firstOrFail();
-    $path = Storage::path($doc->path);
-    return response()->file($path);
   }
 
   /**

@@ -9,9 +9,9 @@
 namespace App\Services;
 
 
-use App\Helpers\Jwt;
 use App\Models\Document;
 use Exception;
+use Firebase\JWT\JWT;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Storage;
 
@@ -41,7 +41,8 @@ class PdfService
    */
   private static function convert($payload, $result_path): array
   {
-    $jwt_token = Jwt::encode($payload, config('onlyoffice.secret'));
+
+    $jwt_token = JWT::encode($payload, config('onlyoffice.secret'), 'HS256');
 
     $response = Http::withHeaders([
       'Accept' => 'application/json',
@@ -53,7 +54,6 @@ class PdfService
 
     if (!$response->successful())
       throw new Exception('Error on saving converted file. Unsuccessful', $response->status());
-
 
     $data = @$response->json();
     $error = null;

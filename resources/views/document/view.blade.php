@@ -63,13 +63,13 @@
     <div class="tab-content">
       <div class="tab-pane fade show active" id="navs-justified-home" role="tabpanel">
         <a href="{{route('document-index')}}"
-           class="btn text-white btn-warning rounded-pill btn-icon me-5"
+           class="btn text-white btn-primary rounded-pill btn-icon me-5"
            data-bs-toggle="tooltip"
            data-bs-placement="top"
            data-bs-original-title="Document list"
            data-bs-custom-class="tooltip-warning"
         >
-          <i class="icon-base ti tabler-arrow-back-up"></i>
+          <i class="icon-base ti tabler-list"></i>
         </a>
         <a href="{{route('document-edit', ['code' => $document->code])}}"
            class="btn text-white btn-info rounded-pill btn-icon"
