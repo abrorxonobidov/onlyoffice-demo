@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use Illuminate\Pagination\Paginator;
+use Illuminate\Support\Facades\URL;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\Vite;
 
@@ -30,6 +31,8 @@ class AppServiceProvider extends ServiceProvider
             return [];
         });
       Paginator::useBootstrapFive();
-
+      if(config('app.force_https', true)) {
+        URL::forceScheme('https');
+      }
     }
 }
