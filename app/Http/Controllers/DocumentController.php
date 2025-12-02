@@ -54,7 +54,7 @@ class DocumentController extends Controller
       'created_at' => $date,
     ]);
     return redirect()->route('document-edit', [
-      'id' => $doc->id
+      'code' => $doc->code
     ]);
   }
 
@@ -78,7 +78,7 @@ class DocumentController extends Controller
       'created_at' => $date,
     ]);
     return redirect()->route('document-edit', [
-      'id' => $doc->id
+      'code' => $doc->code
     ]);
   }
 
@@ -89,7 +89,7 @@ class DocumentController extends Controller
     $documentConfig = [
       'document' => [
         'fileType' => $doc->ext,
-        'key' => $doc->id . '-' . md5($doc->updated_at) . time(),
+        'key' => $doc->code . '-' . md5($doc->updated_at) . time(),
         'title' => $doc->name,
         'url' => route('document-get', ['code' => $doc->code]),
       ],
@@ -275,7 +275,7 @@ class DocumentController extends Controller
     ]);
     $document = Document::query()->where('code', $request->code)->firstOrFail();
     $document->delete();
-    return redirect()->to('document-index');
+    return redirect()->route('document-index');
   }
 
   public function view($code)
