@@ -11,4 +11,8 @@ return [
   'secret' => env('ONLYOFFICE_JWT_SECRET'),
   'builder' => env('ONLYOFFICE_BUILDER_PATH'),
   'pdf_check_limit' => env('ONLYOFFICE_PDF_CHECK_LIMIT', 10),
+  'localApp' => [
+    'domain' => env('ONLYOFFICE_LOCAL_APP_DOMAIN'),
+    'absolute' => env('ONLYOFFICE_LOCAL_APP_ABSOLUTE', true),
+  ],
 ];

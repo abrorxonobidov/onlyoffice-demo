@@ -91,13 +91,13 @@ class DocumentController extends Controller
         'fileType' => $doc->ext,
         'key' => $doc->code . '-' . md5($doc->updated_at) . time(),
         'title' => $doc->name,
-        'url' => route('get-file', ['code' => $doc->code]),
+        'url' => config('onlyoffice.localApp.domain') . route('get-file', ['code' => $doc->code], config('onlyoffice.localApp.absolute')),
       ],
       'documentType' => Helpers::documentTypeList()[$doc->ext],
       'editorConfig' => [
         'mode' => 'edit',
         'lang' => 'en',
-        'callbackUrl' => route('document-callback', ['code' => $doc->code]),
+        'callbackUrl' => config('onlyoffice.localApp.domain') . route('document-callback', ['code' => $doc->code], config('onlyoffice.localApp.absolute')),
         'user' => [
           'id' => Auth::id(),
           'name' => 'Obidov A.A.',
