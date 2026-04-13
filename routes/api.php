@@ -11,3 +11,9 @@ Route::middleware(JwtMiddleware::class)->group(function () {
 });
 Route::get('/get-pdf/{code}', [DocumentController::class, 'getPdf'])->name('get-pdf');
 Route::get('/check-pdf/{code}/{i?}', [DocumentController::class, 'checkPdf'])->name('check-pdf');
+Route::get('/heath-check', function () {
+  return response()->json([
+    'status' => 200,
+    'message' => 'OK',
+  ]);
+})->name('heath-check');
