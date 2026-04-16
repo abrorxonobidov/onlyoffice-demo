@@ -1,0 +1,37 @@
+services:
+  onlyoffice-documentserver:
+    image: onlyoffice/documentserver
+    container_name: onlyoffice-documentserver-3
+    environment:
+      - DB_TYPE=postgres
+      - DB_HOST=host.docker.internal
+      - DB_PORT=5432
+      - DB_NAME=onlyoffice_3
+      - DB_USER=onlyoffice
+      - DB_PWD=
+      - AMQP_URI=amqp://guest:guest@host.docker.internal/onlyoffice_3
+      - JWT_ENABLED=true
+      - JWT_SECRET=
+      - JWT_HEADER=Authorization
+      - JWT_IN_BODY=true
+    ports:
+      - "8043:80"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+      - "office-app-eqaror.loc:host-gateway"
+      - "office-app-kengash.loc:host-gateway"
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:80/healthcheck" ]
+      interval: 30s
+      retries: 5
+      start_period: 60s
+      timeout: 10s
+    stdin_open: true
+    restart: always
+    stop_grace_period: 60s
+    volumes:
+      - /var/www/onlyoffice/8043/Data:/var/www/onlyoffice/Data
+      - /var/log/onlyoffice/8043:/var/log/onlyoffice
+      - /var/lib/onlyoffice/8043/documentserver/App_Data/cache/files:/var/lib/onlyoffice/documentserver/App_Data/cache/files
+      - /var/www/onlyoffice/8043/documentserver-example/public/files:/var/www/onlyoffice/documentserver-example/public/files
+      - /usr/share/fonts:/usr/share/fonts
