@@ -9,7 +9,7 @@ services:
       - DB_NAME=onlyoffice_3
       - DB_USER=onlyoffice
       - DB_PWD=
-      - AMQP_URI=amqp://guest:guest@host.docker.internal/onlyoffice_3
+      - AMQP_URI=amqp://onlyoffice:<ampq_password>@host.docker.internal:5672/onlyoffice_3
       - JWT_ENABLED=true
       - JWT_SECRET=
       - JWT_HEADER=Authorization

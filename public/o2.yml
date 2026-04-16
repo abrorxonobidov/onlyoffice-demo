@@ -2,8 +2,6 @@ services:
   onlyoffice-documentserver:
     image: onlyoffice/documentserver
     container_name: onlyoffice-documentserver-2
-    depends_on:
-      - onlyoffice-rabbitmq
     environment:
       - DB_TYPE=postgres
       - DB_HOST=host.docker.internal
@@ -11,7 +9,7 @@ services:
       - DB_NAME=onlyoffice_2
       - DB_USER=onlyoffice
       - DB_PWD=
-      - AMQP_URI=amqp://guest:guest@onlyoffice-rabbitmq
+      - AMQP_URI=amqp://onlyoffice:<ampq_password>@host.docker.internal:5672/onlyoffice_2
       - JWT_ENABLED=true
       - JWT_SECRET=
       - JWT_HEADER=Authorization
@@ -37,15 +35,3 @@ services:
       - /var/lib/onlyoffice/8042/documentserver/App_Data/cache/files:/var/lib/onlyoffice/documentserver/App_Data/cache/files
       - /var/www/onlyoffice/8042/documentserver-example/public/files:/var/www/onlyoffice/documentserver-example/public/files
       - /usr/share/fonts:/usr/share/fonts
-  onlyoffice-rabbitmq:
-    container_name: onlyoffice-rabbitmq-2
-    image: rabbitmq:3
-    restart: always
-    expose:
-      - '5672'
-    healthcheck:
-      test: [ "CMD", "rabbitmq-diagnostics", "status" ]
-      interval: 10s
-      retries: 3
-      start_period: 10s
-      timeout: 10s
