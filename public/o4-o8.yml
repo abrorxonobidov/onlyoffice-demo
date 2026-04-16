@@ -1,0 +1,185 @@
+services:
+  onlyoffice-documentserver-4:
+    image: onlyoffice/documentserver
+    container_name: onlyoffice-documentserver-4
+    environment:
+      - DB_TYPE=postgres
+      - DB_HOST=host.docker.internal
+      - DB_PORT=5432
+      - DB_NAME=onlyoffice_4
+      - DB_USER=onlyoffice
+      - DB_PWD=
+      - AMQP_URI=amqp://onlyoffice:<ampq_password>@host.docker.internal:5672/onlyoffice_4
+      - JWT_ENABLED=true
+      - JWT_SECRET=
+      - JWT_HEADER=Authorization
+      - JWT_IN_BODY=true
+    ports:
+      - "8044:80"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+      - "office-app-eqaror.loc:host-gateway"
+      - "office-app-kengash.loc:host-gateway"
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:80/healthcheck" ]
+      interval: 30s
+      retries: 5
+      start_period: 60s
+      timeout: 10s
+    stdin_open: true
+    restart: always
+    stop_grace_period: 60s
+    volumes:
+      - /var/www/onlyoffice/8044/Data:/var/www/onlyoffice/Data
+      - /var/log/onlyoffice/8044:/var/log/onlyoffice
+      - /var/lib/onlyoffice/8044/documentserver/App_Data/cache/files:/var/lib/onlyoffice/documentserver/App_Data/cache/files
+      - /var/www/onlyoffice/8044/documentserver-example/public/files:/var/www/onlyoffice/documentserver-example/public/files
+      - /usr/share/fonts:/usr/share/fonts
+
+  onlyoffice-documentserver-5:
+    image: onlyoffice/documentserver
+    container_name: onlyoffice-documentserver-5
+    environment:
+      - DB_TYPE=postgres
+      - DB_HOST=host.docker.internal
+      - DB_PORT=5432
+      - DB_NAME=onlyoffice_5
+      - DB_USER=onlyoffice
+      - DB_PWD=
+      - AMQP_URI=amqp://onlyoffice:<ampq_password>@host.docker.internal:5672/onlyoffice_5
+      - JWT_ENABLED=true
+      - JWT_SECRET=
+      - JWT_HEADER=Authorization
+      - JWT_IN_BODY=true
+    ports:
+      - "8045:80"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+      - "office-app-eqaror.loc:host-gateway"
+      - "office-app-kengash.loc:host-gateway"
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:80/healthcheck" ]
+      interval: 30s
+      retries: 5
+      start_period: 60s
+      timeout: 10s
+    stdin_open: true
+    restart: always
+    stop_grace_period: 60s
+    volumes:
+      - /var/www/onlyoffice/8045/Data:/var/www/onlyoffice/Data
+      - /var/log/onlyoffice/8045:/var/log/onlyoffice
+      - /var/lib/onlyoffice/8045/documentserver/App_Data/cache/files:/var/lib/onlyoffice/documentserver/App_Data/cache/files
+      - /var/www/onlyoffice/8045/documentserver-example/public/files:/var/www/onlyoffice/documentserver-example/public/files
+      - /usr/share/fonts:/usr/share/fonts
+
+  onlyoffice-documentserver-6:
+    image: onlyoffice/documentserver
+    container_name: onlyoffice-documentserver-6
+    environment:
+      - DB_TYPE=postgres
+      - DB_HOST=host.docker.internal
+      - DB_PORT=5432
+      - DB_NAME=onlyoffice_6
+      - DB_USER=onlyoffice
+      - DB_PWD=
+      - AMQP_URI=amqp://onlyoffice:<ampq_password>@host.docker.internal:5672/onlyoffice_6
+      - JWT_ENABLED=true
+      - JWT_SECRET=
+      - JWT_HEADER=Authorization
+      - JWT_IN_BODY=true
+    ports:
+      - "8046:80"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+      - "office-app-eqaror.loc:host-gateway"
+      - "office-app-kengash.loc:host-gateway"
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:80/healthcheck" ]
+      interval: 30s
+      retries: 5
+      start_period: 60s
+      timeout: 10s
+    stdin_open: true
+    restart: always
+    stop_grace_period: 60s
+    volumes:
+      - /var/www/onlyoffice/8046/Data:/var/www/onlyoffice/Data
+      - /var/log/onlyoffice/8046:/var/log/onlyoffice
+      - /var/lib/onlyoffice/8046/documentserver/App_Data/cache/files:/var/lib/onlyoffice/documentserver/App_Data/cache/files
+      - /var/www/onlyoffice/8046/documentserver-example/public/files:/var/www/onlyoffice/documentserver-example/public/files
+      - /usr/share/fonts:/usr/share/fonts
+
+  onlyoffice-documentserver-7:
+    image: onlyoffice/documentserver
+    container_name: onlyoffice-documentserver-7
+    environment:
+      - DB_TYPE=postgres
+      - DB_HOST=host.docker.internal
+      - DB_PORT=5432
+      - DB_NAME=onlyoffice_7
+      - DB_USER=onlyoffice
+      - DB_PWD=
+      - AMQP_URI=amqp://onlyoffice:<ampq_password>@host.docker.internal:5672/onlyoffice_7
+      - JWT_ENABLED=true
+      - JWT_SECRET=
+      - JWT_HEADER=Authorization
+      - JWT_IN_BODY=true
+    ports:
+      - "8047:80"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+      - "office-app-eqaror.loc:host-gateway"
+      - "office-app-kengash.loc:host-gateway"
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:80/healthcheck" ]
+      interval: 30s
+      retries: 5
+      start_period: 60s
+      timeout: 10s
+    stdin_open: true
+    restart: always
+    stop_grace_period: 60s
+    volumes:
+      - /var/www/onlyoffice/8047/Data:/var/www/onlyoffice/Data
+      - /var/log/onlyoffice/8047:/var/log/onlyoffice
+      - /var/lib/onlyoffice/8047/documentserver/App_Data/cache/files:/var/lib/onlyoffice/documentserver/App_Data/cache/files
+      - /var/www/onlyoffice/8047/documentserver-example/public/files:/var/www/onlyoffice/documentserver-example/public/files
+      - /usr/share/fonts:/usr/share/fonts
+
+  onlyoffice-documentserver-8:
+    image: onlyoffice/documentserver
+    container_name: onlyoffice-documentserver-8
+    environment:
+      - DB_TYPE=postgres
+      - DB_HOST=host.docker.internal
+      - DB_PORT=5432
+      - DB_NAME=onlyoffice_8
+      - DB_USER=onlyoffice
+      - DB_PWD=
+      - AMQP_URI=amqp://onlyoffice:<ampq_password>@host.docker.internal:5672/onlyoffice_8
+      - JWT_ENABLED=true
+      - JWT_SECRET=
+      - JWT_HEADER=Authorization
+      - JWT_IN_BODY=true
+    ports:
+      - "8048:80"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+      - "office-app-eqaror.loc:host-gateway"
+      - "office-app-kengash.loc:host-gateway"
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:80/healthcheck" ]
+      interval: 30s
+      retries: 5
+      start_period: 60s
+      timeout: 10s
+    stdin_open: true
+    restart: always
+    stop_grace_period: 60s
+    volumes:
+      - /var/www/onlyoffice/8048/Data:/var/www/onlyoffice/Data
+      - /var/log/onlyoffice/8048:/var/log/onlyoffice
+      - /var/lib/onlyoffice/8048/documentserver/App_Data/cache/files:/var/lib/onlyoffice/documentserver/App_Data/cache/files
+      - /var/www/onlyoffice/8048/documentserver-example/public/files:/var/www/onlyoffice/documentserver-example/public/files
+      - /usr/share/fonts:/usr/share/fonts
