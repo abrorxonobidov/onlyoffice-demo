@@ -1,7 +1,7 @@
 services:
   onlyoffice-documentserver:
     image: onlyoffice/documentserver
-    container_name: onlyoffice-documentserver
+    container_name: onlyoffice-documentserver-2
     depends_on:
       - onlyoffice-rabbitmq
     environment:
@@ -38,7 +38,7 @@ services:
       - /var/www/onlyoffice/8042/documentserver-example/public/files:/var/www/onlyoffice/documentserver-example/public/files
       - /usr/share/fonts:/usr/share/fonts
   onlyoffice-rabbitmq:
-    container_name: onlyoffice-rabbitmq
+    container_name: onlyoffice-rabbitmq-2
     image: rabbitmq:3
     restart: always
     expose:

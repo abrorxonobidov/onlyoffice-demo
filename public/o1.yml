@@ -1,18 +1,16 @@
 services:
   onlyoffice-documentserver:
-    build:
-      context: .
     image: onlyoffice/documentserver
-    container_name: onlyoffice-documentserver
+    container_name: onlyoffice-documentserver-1
     depends_on:
-      - onlyoffice-postgresql
       - onlyoffice-rabbitmq
     environment:
       - DB_TYPE=postgres
-      - DB_HOST=onlyoffice-postgresql
+      - DB_HOST=host.docker.internal
       - DB_PORT=5432
-      - DB_NAME=onlyoffice
+      - DB_NAME=onlyoffice_1
       - DB_USER=onlyoffice
+      - DB_PWD=
       - AMQP_URI=amqp://guest:guest@onlyoffice-rabbitmq
       - JWT_ENABLED=true
       - JWT_SECRET=
@@ -21,10 +19,11 @@ services:
     ports:
       - "8041:80"
     extra_hosts:
+      - "host.docker.internal:host-gateway"
       - "office-app-eqaror.loc:host-gateway"
       - "office-app-kengash.loc:host-gateway"
     healthcheck:
-      test: [ "CMD", "curl", "-f", "http://localhost:8000/info/info.json" ]
+      test: [ "CMD", "curl", "-f", "http://localhost:80/healthcheck" ]
       interval: 30s
       retries: 5
       start_period: 60s
@@ -33,13 +32,13 @@ services:
     restart: always
     stop_grace_period: 60s
     volumes:
-      - /var/www/onlyoffice/8041/Data
-      - /var/log/onlyoffice/8041
-      - /var/lib/onlyoffice/8041/documentserver/App_Data/cache/files
-      - /var/www/onlyoffice/8041/documentserver-example/public/files
-      - /usr/share/fonts
+      - /var/www/onlyoffice/8041/Data:/var/www/onlyoffice/Data
+      - /var/log/onlyoffice/8041:/var/log/onlyoffice
+      - /var/lib/onlyoffice/8041/documentserver/App_Data/cache/files:/var/lib/onlyoffice/documentserver/App_Data/cache/files
+      - /var/www/onlyoffice/8041/documentserver-example/public/files:/var/www/onlyoffice/documentserver-example/public/files
+      - /usr/share/fonts:/usr/share/fonts
   onlyoffice-rabbitmq:
-    container_name: onlyoffice-rabbitmq
+    container_name: onlyoffice-rabbitmq-1
     image: rabbitmq:3
     restart: always
     expose:
@@ -50,23 +49,3 @@ services:
       retries: 3
       start_period: 10s
       timeout: 10s
-  onlyoffice-postgresql:
-    container_name: onlyoffice-postgresql
-    image: postgres:15
-    environment:
-      - POSTGRES_DB=onlyoffice
-      - POSTGRES_USER=onlyoffice
-      - POSTGRES_HOST_AUTH_METHOD=trust
-    restart: always
-    expose:
-      - '5432'
-    volumes:
-      - postgresql_data:/var/lib/postgresql
-    healthcheck:
-      test: [ "CMD-SHELL", "pg_isready -U onlyoffice" ]
-      interval: 10s
-      retries: 3
-      start_period: 10s
-      timeout: 10s
-volumes:
-  postgresql_data:
