@@ -1,0 +1,53 @@
+services:
+  onlyoffice-documentserver:
+    image: onlyoffice/documentserver
+    container_name: onlyoffice-documentserver
+    depends_on:
+      - onlyoffice-rabbitmq
+    environment:
+      # Database connection settings for your local server
+      - DB_TYPE=postgres
+      - DB_HOST=host.docker.internal
+      - DB_PORT=5432
+      - DB_NAME=onlyoffice_<your_port>
+      - DB_USER=onlyoffice
+      - DB_PWD=your_postgres_password  # Add your local postgres password here
+      - AMQP_URI=amqp://guest:guest@onlyoffice-rabbitmq
+      - JWT_ENABLED=true
+      - JWT_SECRET=<your_very_secret_string>
+      - JWT_HEADER=Authorization
+      - JWT_IN_BODY=true
+    ports:
+      - "<your_port>:80"
+    extra_hosts:
+      # This allows the container to resolve 'host.docker.internal' to your server's IP
+      - "host.docker.internal:host-gateway"
+      - "<your_local_app_domain.loc>:host-gateway"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:80/healthcheck"]
+      interval: 30s
+      retries: 5
+      start_period: 60s
+      timeout: 10s
+    stdin_open: true
+    restart: always
+    stop_grace_period: 60s
+    volumes:
+      - /var/www/onlyoffice/<your_port>/Data:/var/www/onlyoffice/Data
+      - /var/log/onlyoffice/<your_port>:/var/log/onlyoffice
+      - /var/lib/onlyoffice/<your_port>/documentserver/App_Data/cache/files:/var/lib/onlyoffice/documentserver/App_Data/cache/files
+      - /var/www/onlyoffice/<your_port>/documentserver-example/public/files:/var/www/onlyoffice/documentserver-example/public/files
+      - /usr/share/fonts:/usr/share/fonts
+
+  onlyoffice-rabbitmq:
+    container_name: onlyoffice-rabbitmq
+    image: rabbitmq:3
+    restart: always
+    expose:
+      - '5672'
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "status"]
+      interval: 10s
+      retries: 3
+      start_period: 10s
+      timeout: 10s
